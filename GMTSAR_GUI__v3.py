@@ -512,8 +512,8 @@ class Step1(tk.Frame):
         btn2=tk.Button(self, text=" Next >",
             state="disabled",
             command=lambda:Save())
-        btn1.grid(row=10, column=12)
-        btn2.grid(row=10, column=13)
+        btn1.grid(row=9, column=12)
+        btn2.grid(row=9, column=13)
 
         btn_create=tk.Button(self, text="Create", command=Create)
         btn_create.grid(row=8, column=6, sticky='e')
