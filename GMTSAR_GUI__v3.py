@@ -14,6 +14,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.filedialog as fdialog
 import tkinter.messagebox as tkMessageBox
+import tkinter.ttk
 
 ##########################################################
 ################## Create GUI interface ##################
@@ -305,6 +306,9 @@ class Step1(tk.Frame):
         self.controller = controller
 
     def Main(self):
+        global Num_data
+        Num_data=len(data_date)
+
         def Create():
             # make the buttons disabled
             edTxt1.config(state="readonly")
@@ -316,12 +320,11 @@ class Step1(tk.Frame):
             btn_create.config(state="disabled")
 
             # get some needed variables
-            global ESD_YN, Master_date, prep_sh
-            global Num_data, date_list
+            global ESD_YN, Master_date, prep_sh, date_list
             ESD_YN=self.ESD_YN_tmp.get()
             Master_date=self.Master_data_tmp.get()
             prep_sh=self.prep_sh_tmp.get()
-            Num_data=len(data_date)
+
 
             # Link the data are going to use & create the *.sh file
             # .: batch_tops.config
@@ -463,61 +466,129 @@ class Step1(tk.Frame):
         label=tk.Label(self,
             text='Step 1. Preprocessing',
             font='Helvetica 12 bold italic')
-        label.grid(row=0, column=0, sticky='w')
+        label.grid(row=0, column=0, columnspan=3, sticky='w')
 
-        # Dispaly the data date
-        if len(data_date) == 0:
-            label=tk.Label(self, text='Please choose the data date in previous page!!')
-            label.grid(row=1, column=1, sticky='w')
-        else:
-            frame=tk.LabelFrame(self,text='Chosen Date')
-            for i in range (len(data_date)):
-                label=tk.Label(frame, text=data_date[i])
-                label.pack()
-            frame.grid(row=1, column=0, rowspan=len(data_date))
+        # Show some messages:
+        def Display(case):
+            if case == 0:
+                tmp=''
+                for i in range (len(data_date)):
+                    tmp=tmp+data_date[i]+'  '
+                text='Chosen Scenes'
+            elif case == 1:
+                tmp='The following scenes do not have the polarization you choose:\n\n'
+                for i in range (len(polar_check)):
+                    tmp=tmp+polar_check[i]+'  '
+                text='Polarization'
+                tmp=tmp+'\n\nThey are removed from the selection.'
+            elif case == 2:
+                tmp='The following scenes do not have associated POD file:\n\n'
+                for i in range (len(EOF_check)):
+                    tmp=tmp+EOF_check[i]+'  '
+                tmp=tmp+'\n\nPlease add them into the directory of POD before you click "Create" button.'
+                text='POD files'
+            tkMessageBox.showinfo(text,tmp)
+
+        # Chosen Scenes
+        label=tk.Label(self,text='Chosen scenes')
+        label.grid(row=1, column=0, columnspan=3, sticky='w')
+        btn_scene=tk.Button(self, text="Display", command=lambda *args:Display(0))
+        btn_scene.grid(row=2, column=1)
+
+        # if there are some problems on chosen polarization or POD, show the problems
+        polar_check=[]
+        EOF_check=[]
+        del_index=[]
+        for i in range (Num_data):
+            info=Dir_image+'/*'+data_date[i]+'*'
+
+            # check for polarization
+            tmp=glob.glob(info+'/annotation/*'+iw+'*'+polar+'*.xml')
+            if len(tmp) == 0:
+                polar_check.append(data_date[i])
+                del_index.append(i)
+
+            # check for POD file
+            S1AB=glob.glob(info)
+            S1AB=S1AB[0].split('/')
+            S1AB=S1AB[-1]
+            S1AB=S1AB[:3]
+            info=data_date[i]
+            info=datetime.date(int(info[0:4]),int(info[4:6]),int(info[6:8]))
+            info1=info-datetime.timedelta(1)
+            info1=str(info1)
+            info1=eval("info1[0:4]+info1[5:7]+info1[8:10]")
+            info2=info+datetime.timedelta(1)
+            info2=str(info2)
+            info2=eval("info2[0:4]+info2[5:7]+info2[8:10]")
+            tmp=Dir_EOF+'/'+S1AB+'*'+info1+'*'+info2+'*'
+            tmp=glob.glob(tmp)
+            if len(tmp) == 0:
+                EOF_check.append(data_date[i])
+
+        if len(polar_check) != 0 or len(EOF_check) != 0:
+            label=tk.Label(self,
+                text='Problems:')
+            label.grid(row=4, column=0, columnspan=3, sticky='w')
+        if len(polar_check) != 0:
+            btn_polar_check=tk.Button(self, text="Polarization", command=lambda *args:Display(1))
+            btn_polar_check.grid(row=5, column=1)
+        if len(EOF_check) != 0:
+            btn_EOF_check=tk.Button(self, text="      POD      ", command=lambda *args:Display(2))
+            if len(polar_check) != 0:
+                btn_EOF_check.grid(row=6, column=1)
+            else:
+                btn_EOF_check.grid(row=5, column=1)
+
+        # remove the scenes don't have the chosen Polarization
+        for i in range (len(del_index)):
+            del data_date[del_index[len(del_index)-i-1]]
+        Num_data=len(data_date)
+
+        # vertiacl line
+        tkinter.ttk.Separator(self, orient='vertical').grid(column=2, row=2, rowspan=9, sticky='ns')
 
         # Label / Radiobutton for information
         label=tk.Label(self, text='Do you want to use Enhanced Spectral diversity (ESD)?')
-        label.grid(row=2, column=2, columnspan=5, sticky='w')
+        label.grid(row=2, column=3, columnspan=5, sticky='w')
 
         self.ESD_YN_tmp=tk.IntVar()
         rb1=tk.Radiobutton(self, text='yes',
                 variable=self.ESD_YN_tmp, value=1)
-        rb1.grid(row=3, column=2, sticky='w')
+        rb1.grid(row=3, column=3, sticky='w')
         rb2=tk.Radiobutton(self, text='no',
                 variable=self.ESD_YN_tmp, value=0)
-        rb2.grid(row=3, column=3, sticky='w')
+        rb2.grid(row=3, column=4, sticky='w')
 
         # Label / entry for Master data
         label=tk.Label(self, text='Master data fo alignment.')
-        label.grid(row=4, column=2, columnspan=5, sticky='w')
+        label.grid(row=4, column=3, columnspan=5, sticky='w')
 
         self.Master_data_tmp=tk.StringVar()
         edTxt1=tk.Entry(self, textvariable=self.Master_data_tmp, width=20, borderwidth=2)
         edTxt1.insert(0,data_date[0])
-        edTxt1.grid(row=5,column=2, columnspan=5)
+        edTxt1.grid(row=5,column=3, columnspan=5)
 
         # Label / entry for output file name
         label=tk.Label(self, text='File name for step 1.')
-        label.grid(row=6, column=2, columnspan=5, sticky='w')
+        label.grid(row=6, column=3, columnspan=5, sticky='w')
 
         self.prep_sh_tmp=tk.StringVar()
         edTxt2=tk.Entry(self, textvariable=self.prep_sh_tmp, width=20, borderwidth=2)
-        edTxt2.insert(0,'01_prep.sh')
-        edTxt2.grid(row=7,column=2, columnspan=5)
+        edTxt2.insert(0,'01_prep.csh')
+        edTxt2.grid(row=7,column=3, columnspan=5)
 
         # Button for Pevious / Next steps / create *.csh file
+        btn_create=tk.Button(self, text="Create", command=Create)
+        btn_create.grid(row=8, column=7, sticky='e')
+
         btn1=tk.Button(self, text="< Previous ",
             command=lambda: self.controller.show_frame("Step0"))
         btn2=tk.Button(self, text=" Next >",
             state="disabled",
             command=lambda:Save())
-        btn1.grid(row=9, column=12)
-        btn2.grid(row=9, column=13)
-
-        btn_create=tk.Button(self, text="Create", command=Create)
-        btn_create.grid(row=8, column=6, sticky='e')
-
+        btn1.grid(row=9, column=8)
+        btn2.grid(row=9, column=9)
 
 class Step2(tk.Frame):
 
@@ -561,13 +632,6 @@ class Step2(tk.Frame):
             g.write('\nintf_tops.csh intf.in batch_tops.config\n')
             g.close()
 
-        #def Confirm():
-        #    tkMessageBox.askokcancel("Confirm", "Go to next step?")
-        #    Create()
-
-        #def Save():
-        #    self.controller.show_frame("Execute")
-
         def Done():
             # close the GUI interface
             self.quit()
@@ -604,7 +668,7 @@ class Step2(tk.Frame):
 
         self.proc_sh_tmp=tk.StringVar()
         edTxt=tk.Entry(self, textvariable=self.proc_sh_tmp, width=20, borderwidth=2)
-        edTxt.insert(0,'02_proc.sh')
+        edTxt.insert(0,'02_proc.csh')
         edTxt.grid(row=2,column=4)
 
         # Button for Pevious / Next steps / create *.csh file
