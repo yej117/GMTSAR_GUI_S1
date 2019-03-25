@@ -9,3 +9,7 @@ There are four tabs for different purpose as followings:
 * Step 2: select the day interval for interferometric pairs and it would help automatically create the intf.in file. 
 
 After these steps, there would be 01_prep.sh and 02_proc.sh, and run them by csh.
+
+# Create an execute file
+pyinstaller --onefile GMTSAR_GUI__v3.py
+(sudo pip3 install pyinstaller)
