@@ -1,5 +1,5 @@
 # GMTSAR_GUI
-This python3 program is for reducing time to create batch file for using GMTSAR. 
+This python3 program is for reducing time to create batch file for processing Sentinel-1 IW data by GMTSAR.
 In Ubuntu, the default python program would be python2; as the result, remember to execute it by python3.  
 
 There are four tabs for different purpose as followings: 
