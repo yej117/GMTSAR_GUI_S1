@@ -12,4 +12,3 @@ After these steps, there would be 01_prep.sh and 02_proc.sh, and run them by csh
 
 # Create an execute file
 pyinstaller --onefile GMTSAR_GUI__v3.py
-(sudo pip3 install pyinstaller)
