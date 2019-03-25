@@ -11,12 +11,8 @@ There are four tabs for different purpose as followings:
 After these steps, there would be 01_prep.sh and 02_proc.sh, and run them by csh.
 
 Note!
-
-This program is just for making it easier to link (copy) files and create some \*.in files for GMTSAR.
-As the result, it won't check your input.
-For instance, if you didn't provide all the precise orbit files for scenes, there would be errors while running the program.
-
-In step 1, it will display the chosen date on the left, but if you choose lots of scenes, they will be display outside the window.
+* If you select the polarization that some scenes don't have, they will be automatically removed.
+* If their are some scenes with no orbit files in the directory you provided, please download the orbit files before press the Create button.
 
 # Create an execute file
 pyinstaller --onefile GMTSAR_GUI__v3.py
