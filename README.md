@@ -10,7 +10,7 @@ There are four tabs for different purpose as followings:
 
 After these steps, there would be 01_prep.sh and 02_proc.sh, and run them by csh.
 
-Note!
+Note!\n
 This program is just for making it easier to link (copy) files and create some \*.in files for GMTSAR.
 As the result, it won't check your input.
 For instance, if you didn't provide all the precise orbit files for scenes, there might be errors while running the program.
