@@ -2,7 +2,7 @@
 This python3 program is for reducing time to create batch file for processing Sentinel-1 IW data by GMTSAR.
 In Ubuntu, the default python program would be python2; as the result, remember to execute it by python3.  (~$ python3 GMTSAR_S1__v3.py)
 
-There are four tabs for different purpose as followings: 
+There are four tabs for different purposes in the program as followings: 
 * Info: choose the directories of S-1 scenes and precise orbit ephemerides; and the paths of DEM file, config file [and s1a-aux-cal.xml]. 
 * Step 0: choose the S-1 scenes (from date), and their polarization and sub-swath. 
 * Step 1: link the files to raw & topo directories and create data.in and \*.csh for preprocessing step. 
