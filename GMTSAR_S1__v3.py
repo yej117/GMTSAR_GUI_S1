@@ -561,7 +561,7 @@ class Step1(tk.Frame):
         rb2.grid(row=3, column=4, sticky='w')
 
         # Label / entry for Master data
-        label=tk.Label(self, text='Master data fo alignment.')
+        label=tk.Label(self, text='Master data for alignment.')
         label.grid(row=4, column=3, columnspan=5, sticky='w')
 
         self.Master_data_tmp=tk.StringVar()
@@ -663,7 +663,7 @@ class Step2(tk.Frame):
         scale2.grid(row=4, column=0, rowspan=3)
 
         # Label / entry for output file name
-        label=tk.Label(self, text='File name for step 1.')
+        label=tk.Label(self, text='File name for step 2.')
         label.grid(row=1, column=4, sticky='w')
 
         self.proc_sh_tmp=tk.StringVar()
